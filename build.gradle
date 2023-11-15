@@ -2,6 +2,7 @@ apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'java'
 apply plugin: 'com.diffplug.spotless'
+apply plugin:  'maven-publish'
 
 group = 'org.openapitools'
 version = '1.2.2'
@@ -9,6 +10,7 @@ version = '1.2.2'
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.+'
@@ -150,5 +152,23 @@ spotless {
 
         removeUnusedImports()
         importOrder()
+    }
+}
+
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = "$mavenU"
+                password = "$mavenP"
+            }
+
+            url = version.endsWith('SNAPSHOT') ? "sftp://repo.myxeno.com:22/home/maven/m2repo/snapshots" : "sftp://repo.myxeno.com:22/home/maven/m2repo/releases"
+        }
     }
 }
